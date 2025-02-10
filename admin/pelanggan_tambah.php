@@ -119,10 +119,10 @@ if (isset($_POST['btn-simpan'])) {
                         <a href="paket.php" class="waves-effect "><i class="fa fa-archive fa-fw" aria-hidden="true"></i> Paket</a>
                     </li>
                     <li>
-                        <a href="pengguna.php" class="waves-effect active"><i class="fa fa-user fa-fw" aria-hidden="true"></i> Pengguna</a>
+                        <a href="pengguna.php" class="waves-effect "><i class="fa fa-user fa-fw" aria-hidden="true"></i> Pengguna</a>
                     </li>
                     <li>
-                        <a href="pelanggan.php" class="waves-effect "><i class="fa fa-users fa-fw" aria-hidden="true"></i> Pelanggan</a>
+                        <a href="pelanggan.php" class="waves-effect active "><i class="fa fa-users fa-fw" aria-hidden="true"></i> Pelanggan</a>
                     </li>
                     <li>
                         <a href="transaksi.php" class="waves-effect"><i class="fa fa-shopping-cart fa-fw" aria-hidden="true"></i> Transaksi</a>

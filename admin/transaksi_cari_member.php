@@ -1,3 +1,13 @@
+<?php
+require_once '../function.php';
+
+
+$member = query("SELECT * FROM tb_member");
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -141,6 +151,7 @@
                                     <a href="javascript:void(0)" onclick="window.history.back();" class="btn btn-primary box-title"><i class="fa fa-arrow-left fa-fw"></i> Kembali</a>
                                 </div>
                                 <div class="col-md-6 text-right">
+                                    <small>Jika pelanggan belum terdaftar maka daftarkan dulu lewat menu pelanggan</small>
                                     <button id="btn-refresh" class="btn btn-primary box-title text-right" title="Refresh Data"><i class="fa fa-refresh" id="ic-refresh"></i></button>
                                 </div>
                             </div>
@@ -149,39 +160,30 @@
                                     <thead class="thead-dark">
                                         <tr>
                                             <th>#</th>
-                                            <th>Invoice</th>
                                             <th>Member</th>
-                                            <th>Status</th>
-                                            <th>Total Harga</th>
+                                            <th>Alamat</th>
+                                            <th>Jenis Kelamin</th>
+                                            <th>Nomor Handphone</th>
                                             <th>No Ktp</th>
                                             <th width="15%">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td></td>
-                                            <td>Kailendra</td>
-                                            <td>Jl. Palapa No. 2</td>
-                                            <td>P</td>
-                                            <td>081287446805</td>
-                                            <td>3174031809870003</td>
-                                            <td align="center">
-                                                <a href="transaksi_cari_outlet.php?id=5"
-                                                    data-toggle="tooltip" data-placement="bottom" title="PILIH" class="btn btn-primary btn-block">PILIH</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td>Alexander Romario</td>
-                                            <td>Jl. AUP Raya No</td>
-                                            <td>L</td>
-                                            <td>01287446805</td>
-                                            <td>31740213456789712</td>
-                                            <td align="center">
-                                                <a href="transaksi_cari_outlet.php?id=6"
-                                                    data-toggle="tooltip" data-placement="bottom" title="PILIH" class="btn btn-primary btn-block">PILIH</a>
-                                            </td>
-                                        </tr>
+                                        <?php $i = 1 ?>
+                                        <?php foreach ($member as $row) : ?>
+                                            <tr>
+                                                <td><?= $i++ ?></td>
+                                                <td><?= $row['nama_member'] ?></td>
+                                                <td><?= $row['alamat_member'] ?></td>
+                                                <td><?= $row['jenis_kelamin'] ?></td>
+                                                <td><?= $row['telp_member'] ?></td>
+                                                <td><?= $row['no_ktp'] ?></td>
+                                                <td align="center">
+                                                    <a href="transaksi_cari_outlet.php?id=<?= $row['id_member'] ?>"
+                                                        data-toggle="tooltip" data-placement="bottom" title="PILIH" class="btn btn-primary btn-block">PILIH</a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
