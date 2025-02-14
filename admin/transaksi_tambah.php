@@ -1,3 +1,52 @@
+<?php
+require_once '../function.php';
+$id_member = isset($_GET['id']) ? $_GET['id'] : null;
+$outlet_id = isset($_GET['outlet_id']) ? $_GET['outlet_id'] : null;
+
+// Validasi: Pastikan keduanya tidak kosong
+if (is_null($id_member) || is_null($outlet_id)) {
+    echo "Data tidak lengkap!";
+    exit();
+}
+
+// Ambil data member berdasarkan id_member
+$member = query("SELECT * FROM tb_member WHERE id_member = '$id_member'")[0];
+$outlet = query("SELECT * FROM tb_outlet WHERE id_outlet = '$outlet_id'")[0];
+$paket = query("SELECT * FROM tb_paket");
+// 1. Tentukan prefix
+$prefix = "DRY";
+
+// 2. Ambil tanggal hari ini (format: YYYYMMDD)
+$tanggal = date('Ymd'); // Contoh: 20250111
+
+// 3. Generate nomor unik
+// Opsi 1: Gunakan angka acak
+// $nomor_unik = mt_rand(1000, 9999); // Contoh: 2841
+
+// Opsi 2: Menggunakan timestamp untuk benar-benar unik
+$nomor_unik = date('Hi');
+
+// 4. Gabungkan semuanya
+$kode_invoice = $prefix . $tanggal . $nomor_unik;
+
+
+if (isset($_POST['btn-simpan'])) {
+    //cek data
+    if (tambah_transaksi($_POST) > 0) {
+        echo "<script>
+            alert('Data Berhasil Ditambahkan');
+            document.location.href = 'transaksi.php';
+        </script>";
+    } else {
+        echo "<script>
+            alert('Data Gagal Ditambahkan');
+            document.location.href = 'transaksi.php';
+        </script>";
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -154,22 +203,25 @@
                             <form method="post" action="">
                                 <div class="form-group">
                                     <label>Kode Invoice</label>
-                                    <input type="text" name="kode_invoice" class="form-control" readonly="" value="DRY202501223000">
+                                    <input type="text" name="kode_invoice" class="form-control" readonly="" value="<?= $kode_invoice ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Outlet</label>
-                                    <input type="text" name="username" class="form-control" readonly="" value="Londre Cab. Pasar Minggu">
+                                    <input type="text" name="nama_outlet" class="form-control" readonly="" value="<?= $outlet['nama_outlet'] ?>">
+                                    <input type="hidden" name="id_outlet" class="form-control" readonly="" value="<?= $outlet['id_outlet'] ?>">
+
                                 </div>
                                 <div class="form-group">
                                     <label>Pelanggan</label>
-                                    <input type="text" name="password" class="form-control" readonly="" value="Kailendra">
+                                    <input type="text" name="nama_member" class="form-control" readonly="" value="<?= $member['nama_member'] ?>">
+                                    <input type="hidden" name="id_member" class="form-control" readonly="" value="<?= $member['id_member'] ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Pilih Paket</label>
                                     <select name="paket_id" class="form-control">
-                                        <option value="4">Paket Hemat</option>
-                                        <option value="5">Paket Kilat</option>
-                                        <option value="6">Paket Standar</option>
+                                        <?php foreach ($paket as $p) : ?>
+                                            <option value="<?= $p['id_paket'] ?>"><?= $p['nama_paket'] ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="form-group">

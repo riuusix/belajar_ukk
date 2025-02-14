@@ -117,6 +117,78 @@ function tambah_member($data)
     }
 }
 
+function tambah_transaksi($data)
+{
+    global $conn;
+
+    // Mulai session untuk ambil user_id
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    // Ambil user_id dari session
+    $user_id = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : null;
+
+    if (!$user_id) {
+        echo "User tidak terdaftar di session!";
+        return false;
+    }
+
+    // Ambil data dari $data dan sanitasi
+    $id_member = mysqli_real_escape_string($conn, $data['id_member']);
+    $id_outlet = mysqli_real_escape_string($conn, $data['id_outlet']);
+    $kode_invoice = mysqli_real_escape_string($conn, $data['kode_invoice']);
+    $biaya_tambahan = mysqli_real_escape_string($conn, $data['biaya_tambahan']);
+    $diskon = mysqli_real_escape_string($conn, $data['diskon']);
+    $pajak = mysqli_real_escape_string($conn, $data['pajak']);
+    $tanggal = date('Y-m-d');
+    $id_paket = mysqli_real_escape_string($conn, $data['paket_id']);
+    $jumlah = mysqli_real_escape_string($conn, $data['qty']);
+
+    // Buat query untuk INSERT ke tb_transaksi (dengan user_id)
+    $query1 = "INSERT INTO tb_transaksi VALUES ('', '$id_outlet', '$kode_invoice', '$id_member', '$tanggal', NULL, NULL, '$biaya_tambahan', '$diskon', '$pajak', 'baru', 'belum', '$user_id')";
+    // Coba eksekusi query 1
+    if (mysqli_query($conn, $query1)) {
+        // Dapatkan id_transaksi yang baru ditambahkan
+        $id_transaksi = mysqli_insert_id($conn);
+
+        // Ambil harga dari tb_paket berdasarkan id_paket
+        $query_paket = "SELECT harga FROM tb_paket WHERE id_paket = '$id_paket'";
+        $result_paket = mysqli_query($conn, $query_paket);
+
+        // Cek apakah query paket berhasil
+        if ($result_paket) {
+            $data_paket = mysqli_fetch_assoc($result_paket);
+            $harga = $data_paket['harga'];
+
+            // Hitung total harga
+            $total_harga = $harga * $jumlah;
+
+            // Buat query untuk INSERT ke tb_detail_transaksi
+            $query2 = "INSERT INTO tb_detail_transaksi 
+                       (transaksi_id, paket_id, qty, total_harga, keterangan)
+                       VALUES ('$id_transaksi', '$id_paket', '$jumlah', '$total_harga', NULL)";
+
+            // Coba eksekusi query 2
+            if (mysqli_query($conn, $query2)) {
+                return $id_transaksi; // Berhasil, kembalikan ID transaksi
+            } else {
+                // Gagal insert ke tb_detail_transaksi
+                echo "Gagal Insert ke tb_detail_transaksi: " . mysqli_error($conn) . "<br>";
+                return false;
+            }
+        } else {
+            // Gagal ambil harga dari tb_paket
+            echo "Gagal Query Paket: " . mysqli_error($conn) . "<br>";
+            return false;
+        }
+    } else {
+        // Gagal insert ke tb_transaksi
+        echo "Gagal Insert ke tb_transaksi: " . mysqli_error($conn) . "<br>";
+        return false;
+    }
+}
+
 function ubah_outlet($data)
 {
     global $conn;

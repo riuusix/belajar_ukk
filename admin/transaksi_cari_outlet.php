@@ -2,10 +2,17 @@
 session_start();
 require_once '../function.php';
 
-$id_member = $_SESSION['id_member'] ?? '';
 
 $outlet = query(" SELECT o.id_outlet AS outlet_id, o.nama_outlet AS outlet_nama, o.alamat_outlet AS outlet_alamat, o.telp_outlet AS outlet_tlp, u.id_user AS owner_id, u.nama_user AS owner_nama, u.username AS owner_username FROM tb_outlet o LEFT JOIN tb_user u ON o.id_outlet = u.outlet_id AND u.role = 'owner'");
 
+// Ambil id_member dari URL
+if (isset($_GET['id'])) {
+    $id_member = $_GET['id'];
+} else {
+    // Jika id_member tidak ada, arahkan kembali ke halaman sebelumnya atau tampilkan pesan error
+    header("Location: transaksi_cari_member.php");
+    exit();
+}
 
 ?>
 
@@ -176,7 +183,7 @@ $outlet = query(" SELECT o.id_outlet AS outlet_id, o.nama_outlet AS outlet_nama,
                                                 <td><?= $row['outlet_alamat'] ?></td>
                                                 <td><?= $row['outlet_tlp'] ?></td>
                                                 <td align="center">
-                                                    <a href="transaksi_tambah.php?id=5&outlet_id=<?= $row['outlet_id'] ?>"
+                                                    <a href="transaksi_tambah.php?id=<?= $id_member ?>&outlet_id=<?= $row['outlet_id'] ?>"
                                                         data-toggle="tooltip" data-placement="bottom" title="Pilih" class="btn btn-primary btn-block">PILIH</a>
                                                 </td>
                                             </tr>

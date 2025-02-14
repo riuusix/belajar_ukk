@@ -14,7 +14,7 @@ $transaksi_konfirmasi = query("SELECT
 FROM tb_transaksi t
 LEFT JOIN tb_member m ON t.member_id = m.id_member
 LEFT JOIN tb_outlet o ON t.outlet_id = o.id_outlet
-LEFT JOIN tb_detail_transaksi dt ON dt.transaksi_id = t.id_transaksi");
+LEFT JOIN tb_detail_transaksi dt ON dt.transaksi_id = t.id_transaksi WHERE status_bayar = 'belum'");
 
 
 ?>
