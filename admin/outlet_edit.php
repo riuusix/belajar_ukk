@@ -4,7 +4,11 @@
 require_once '../function.php';
 
 $id = $_GET['id'];
-$outlet = query("SELECT * FROM tb_outlet WHERE id_outlet = $id")[0];
+$outlet = query("SELECT o.id_outlet AS outlet_id, o.nama_outlet AS outlet_nama, o.alamat_outlet AS outlet_alamat, o.telp_outlet AS outlet_tlp, u.id_user AS owner_id, u.nama_user AS owner_nama, u.username AS owner_username FROM tb_outlet o LEFT JOIN tb_user u ON o.id_outlet = u.outlet_id AND u.role = 'owner' WHERE o.id_outlet = $id")[0];
+
+$owner = query("SELECT * FROM tb_user WHERE role = 'owner' AND id_user != $outlet[owner_id]");
+
+//ini belom bener fak males bgt benerinnya jadi besok atau kapan kapan :D
 
 if (isset($_POST['btn-simpan'])) {
     //mengecek data
@@ -198,17 +202,12 @@ if (isset($_POST['btn-simpan'])) {
                                     <input type="text" value="<?= $outlet['telp_outlet']  ?>" name="telp_outlet" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label>Owner Sekarang : Khadafi</label>
+                                    <label>Owner Sekarang : <?= $outlet['nama_owner'] ?></label>
                                     <select name="owner_id_new" class="form-control">
-                                        <option class="">Pilih Untuk Mengganti owner</option>
-                                        <option value="10">Sepdullah
-                                            ( Owner di Londre Cab. Pasar Minggu )
-
-                                        </option>
-                                        <option value="13">Khadafi
-                                            ( Owner di Londre Cab. Mampang Prapatan )
-
-                                        </option>
+                                        <?php foreach ($owner as $row) : ?>
+                                            <option class="">Pilih Untuk Mengganti owner</option>
+                                            <option value="<?= $row['id_user'] ?>"><?= $row['nama_user'] ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="text-right">

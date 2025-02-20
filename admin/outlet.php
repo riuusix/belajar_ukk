@@ -174,7 +174,7 @@ $outlet = query(" SELECT o.id_outlet AS outlet_id, o.nama_outlet AS outlet_nama,
                                             <tr>
                                                 <td><?= $i; ?></td>
                                                 <td><?= $row['outlet_nama']; ?></td>
-                                                <td><?= $row['owner_nama'] ? $row['owner_nama'] : '-'; ?></td>
+                                                <td><?= $row['owner_nama'] ? $row['owner_nama'] : 'Belum ada owner'; ?></td>
                                                 <td><?= $row['outlet_tlp']; ?></td>
                                                 <td><?= $row['outlet_alamat']; ?></td>
                                                 <td align="center">

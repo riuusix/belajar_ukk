@@ -6,6 +6,13 @@ $id = $_GET['id'];
 $member = query("SELECT * FROM tb_member WHERE id_member = $id")[0];
 
 if (isset($_POST['btn-simpan'])) {
+    if (ubah_member($_POST) > 0) {
+        echo "<script>alert('Data Berhasil Diubah'); window.location.href='index.php';</
+        /script>";
+    } else {
+        echo "<script>alert('Data Gagal Diubah'); window.location.href='index.php';</
+            /script>";
+    }
 }
 
 
