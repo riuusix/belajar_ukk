@@ -4,28 +4,28 @@
 require_once '../function.php';
 
 $id = $_GET['id'];
-$outlet = query("SELECT o.id_outlet AS outlet_id, o.nama_outlet AS outlet_nama, o.alamat_outlet AS outlet_alamat, o.telp_outlet AS outlet_tlp, u.id_user AS owner_id, u.nama_user AS owner_nama, u.username AS owner_username FROM tb_outlet o LEFT JOIN tb_user u ON o.id_outlet = u.outlet_id AND u.role = 'owner' WHERE o.id_outlet = $id")[0];
+$outlet = query("SELECT o.id_outlet AS outlet_id, o.nama_outlet AS nama_outlet, o.alamat_outlet AS alamat_outlet, o.telp_outlet AS telp_outlet, u.id_user AS owner_id, u.nama_user AS nama_owner, u.username AS owner_username FROM tb_outlet o LEFT JOIN tb_user u ON o.id_outlet = u.outlet_id AND u.role = 'owner' WHERE o.id_outlet = $id")[0];
 
-$owner = query("SELECT * FROM tb_user WHERE role = 'owner' AND id_user != $outlet[owner_id]");
+$owner_id = isset($outlet['owner_id']) ? intval($outlet['owner_id']) : 0;
+$owners = query("SELECT u.id_user, u.nama_user, u.outlet_id, o.nama_outlet
+FROM tb_user u
+LEFT JOIN tb_outlet o ON u.outlet_id = o.id_outlet
+WHERE u.role = 'owner' AND id_user != $owner_id");
 
 //ini belom bener fak males bgt benerinnya jadi besok atau kapan kapan :D
 
 if (isset($_POST['btn-simpan'])) {
     //mengecek data
     if (ubah_outlet($_POST) > 0) {
-        echo "
-            <script>
-                alert('Data Berhasil Diubah');
-                document.location.href = 'outlet.php';
-            </script>
-            ";
+        echo "<script>
+            alert('Data Berhasil Diubah');
+            document.location.href = 'outlet.php';
+        </script>";
     } else {
-        echo "
-            <script>
-                alert('Data Gagal Diubah');
-                document.location.href = 'outlet.php';
-            </script>
-            ";
+        echo "<script>
+            alert('Data Gagal Diubah');
+            document.location.href = 'outlet.php';
+        </script>";
     }
 }
 
@@ -187,7 +187,7 @@ if (isset($_POST['btn-simpan'])) {
                         <div class="white-box">
                             <form method="post" action="">
                                 <div class="form-group">
-                                    <input type="hidden" value="<?= $outlet['id_outlet'] ?>" name="id_outlet" class="form-control">
+                                    <input type="hidden" value="<?= $outlet['outlet_id'] ?>" name="id_outlet" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Nama Outlet</label>
@@ -204,9 +204,16 @@ if (isset($_POST['btn-simpan'])) {
                                 <div class="form-group">
                                     <label>Owner Sekarang : <?= $outlet['nama_owner'] ?></label>
                                     <select name="owner_id_new" class="form-control">
-                                        <?php foreach ($owner as $row) : ?>
-                                            <option class="">Pilih Untuk Mengganti owner</option>
-                                            <option value="<?= $row['id_user'] ?>"><?= $row['nama_user'] ?></option>
+                                        <option class="">Pilih Untuk Mengganti owner</option>
+                                        <?php foreach ($owners as $row) : ?>
+                                            <option value="<?= $row['id_user']; ?>">
+                                                <?= $row['nama_user']; ?>
+                                                <?php if (!empty($row['outlet_id'])) : ?>
+                                                    ( Owner di <?= $row['nama_outlet'] ?> )
+                                                <?php else: ?>
+                                                    ( Belum ada owner )
+                                                <?php endif; ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

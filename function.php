@@ -197,16 +197,28 @@ function ubah_outlet($data)
     $nama_outlet = htmlspecialchars($data['nama_outlet']);
     $alamat_outlet = htmlspecialchars($data['alamat_outlet']);
     $telp_outlet = htmlspecialchars($data['telp_outlet']);
+    $pemilik = htmlspecialchars(stripslashes($data['owner_id_new'])); // Perbaikan variabel
 
-    $query = "UPDATE tb_outlet SET nama_outlet = '$nama_outlet', alamat_outlet = '$alamat_outlet', telp_outlet = '$telp_outlet' WHERE id_outlet = $id_outlet";
+    // Ambil data owner dari tb_user
+    $ownerQuery = "SELECT * FROM tb_user WHERE id_user = $pemilik LIMIT 1";
+    $ownerResult = mysqli_query($conn, $ownerQuery);
+    $owner = mysqli_fetch_assoc($ownerResult);
 
-    // var_dump($query);
-    // die();
-
+    // Update tb_outlet
+    $query = "UPDATE tb_outlet SET 
+                nama_outlet = '$nama_outlet', 
+                alamat_outlet = '$alamat_outlet', 
+                telp_outlet = '$telp_outlet' 
+              WHERE id_outlet = $id_outlet";
     mysqli_query($conn, $query);
+
+    // Update tb_user (owner) dengan outlet_id baru
+    $updateOwnerQuery = "UPDATE tb_user SET outlet_id = $id_outlet WHERE id_user = $pemilik";
+    mysqli_query($conn, $updateOwnerQuery);
 
     return mysqli_affected_rows($conn);
 }
+
 
 function ubah_paket($data)
 {
